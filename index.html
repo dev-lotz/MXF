@@ -1,14 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DMS Protheus - MXF Motors | Acesso Restrito</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Chosen Palette: MXF Motors Identity -->
+
     <style>
+        :root {
+            --brand-red: #dc2626;
+            --brand-zinc: #18181b;
+            --transition-smooth: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
         /* Custom Chart Container Styles */
         .chart-container {
             position: relative;
@@ -19,42 +31,95 @@
             height: 300px;
             max-height: 400px;
         }
+
         @media (min-width: 768px) {
-            .chart-container { height: 350px; }
+            .chart-container {
+                height: 350px;
+            }
         }
 
-        /* Navigation Active State - MXF Style */
-        .nav-btn.active {
-            background-color: #18181b; /* zinc-900 */
-            color: white;
-            border-bottom: 4px solid #dc2626; /* red-600 */
-        }
-        
-        /* Card Hover Effects */
-        .feature-card {
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-        }
-        .feature-card:hover {
-            transform: translateY(-2px);
-            border-left: 4px solid #dc2626;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        /* Feature List Styling inside Cards */
-        .feature-list li {
+        /* Navigation - Sliding Underline */
+        .nav-btn {
             position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem; /* text-sm */
-            color: #52525b; /* zinc-600 */
+            transition: color 0.3s ease;
         }
-        .feature-list li::before {
-            content: '•';
+
+        .nav-btn::after {
+            content: '';
             position: absolute;
-            left: 0;
-            color: #dc2626; /* red-600 */
-            font-weight: bold;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 4px;
+            background: var(--brand-red);
+            transition: var(--transition-smooth);
+            transform: translateX(-50%);
+        }
+
+        .nav-btn.active::after {
+            width: 100%;
+        }
+
+        .nav-btn.active {
+            color: var(--brand-zinc);
+            background-color: #f4f4f5 !important;
+        }
+
+        /* Card Interactions */
+        .feature-card {
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(0, 0, 0, 0.05) !important;
+            background: #ffffff;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: rgba(220, 38, 38, 0.2) !important;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            opacity: 0;
+            animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        .delay-5 {
+            animation-delay: 0.5s;
+        }
+
+        /* Glassmorphism for Nav */
+        nav.sticky {
+            backdrop-filter: blur(12px);
+            background: rgba(244, 244, 245, 0.9) !important;
         }
 
         /* Workflow Connector Lines */
@@ -67,64 +132,123 @@
             font-size: 1.5rem;
             color: #d4d4d8;
         }
-        .workflow-step:last-child::after { content: ''; }
+
+        .workflow-step:last-child::after {
+            content: '';
+        }
 
         /* Hide scrollbar */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
 
         /* Animations for Login */
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
         }
+
         .shake-animation {
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
         }
     </style>
 </head>
+
 <body class="bg-zinc-100 text-zinc-800 font-sans leading-relaxed selection:bg-red-200">
 
     <!-- ===================== TELA DE LOGIN ===================== -->
     <div id="login-screen" class="min-h-screen flex items-center justify-center bg-zinc-900 p-4">
-        <div id="login-card" class="bg-zinc-950 p-8 md:p-12 rounded-xl shadow-2xl border-t-4 border-red-600 w-full max-w-md text-center relative overflow-hidden">
+        <div id="login-card"
+            class="bg-zinc-950 p-8 md:p-12 rounded-xl shadow-2xl border-t-4 border-red-600 w-full max-w-md text-center relative overflow-hidden">
             <!-- Elemento de design decorativo -->
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-red-600 rounded-full blur-3xl opacity-20"></div>
-            
+
             <div class="flex justify-center mb-6">
-                <div class="bg-red-600 text-white font-black italic text-4xl px-4 py-2 tracking-tighter rounded-sm shadow-inner transform -skew-x-12">MXF</div>
+                <!-- SVG Logo -->
+                <div class="w-48 h-auto drop-shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 180.397 50.879"
+                        preserveAspectRatio="xMidYMid meet">
+                        <g transform="translate(-286.057 -331.463)">
+                            <path
+                                d="M455.815,509.215l-19.515.008,3.08-5.28h0l-3.889-.66-.051-.235,26.743-.012h0l4.271-7.322-36.12.017-16.027,8.35,6.9,0L408.436,526.33l17.944-.009,6.507-11.249,19.515-.008,3.412-5.85ZM378.284,511.6l-6.751-15.913h23.38l1.137,4.727-7.509,5.64.061.232,20.5-10.558h16.284l-26.611,13.846,6.625,16.752H372.466l12.409-8.828-.056-.232-18.767,9.06L326.27,538.519h-.247L378.284,511.6ZM335.965,526.3h3.093l22.915-14.044,9.559-16.561-22.68.01-18.919,12.277-.084-.226,2.914-2.682-2.311-6.157c-1.065-2.838-3.759-3.2-8.692-3.2l-17.859.008-17.845,30.6,17.619-.007,11.841-20.272-.736-3.892.2-.13,6.548,17.633c3.073,0,4.274-.209,5.7-1.123l19.358-12.106,2.549-3.031.229.074Z"
+                                transform="translate(0 -156.177)" fill="#ffffff" fill-rule="evenodd" />
+                            <path
+                                d="M1647.2,354.481l-.789-1.857-23.277,14.251,24.066-12.394Zm63.658-16.964,11.65-6.054H1680.98l-12.53,7.672.944,3.918,10.748-5.535Z"
+                                transform="translate(-1271.531)" fill="#dc2626" fill-rule="evenodd" />
+                        </g>
+                    </svg>
+                </div>
             </div>
-            
+
             <h2 class="text-2xl font-bold text-white mb-2 uppercase tracking-wide">Acesso Restrito</h2>
             <p class="text-zinc-400 text-sm mb-8">Apresentação Executiva DMS Protheus</p>
-            
+
             <form id="login-form" onsubmit="verificarSenha(event)" class="space-y-4">
                 <div>
-                    <input type="password" id="password-input" placeholder="Insira a senha de acesso" 
-                           class="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-white rounded focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors text-center font-mono tracking-widest">
+                    <input type="password" id="password-input" placeholder="Insira a senha de acesso"
+                        class="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-white rounded focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors text-center font-mono tracking-widest">
                 </div>
-                <div id="error-message" class="text-red-500 text-sm font-bold hidden uppercase">Senha incorreta. Tente novamente.</div>
-                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded transition-colors uppercase tracking-widest text-sm">
+                <div id="error-message" class="text-red-500 text-sm font-bold hidden uppercase">Senha incorreta. Tente
+                    novamente.</div>
+                <button type="submit"
+                    class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded transition-colors uppercase tracking-widest text-sm">
                     Acessar Plataforma
                 </button>
             </form>
-            
+
             <p class="mt-8 text-xs text-zinc-600 uppercase tracking-widest">Confidencial • B2B Solutions</p>
         </div>
     </div>
 
 
     <!-- ===================== APLICAÇÃO PRINCIPAL (Oculta até login) ===================== -->
-    <div id="app-content" class="hidden min-h-screen flex-col max-w-7xl mx-auto shadow-2xl bg-white my-4 rounded-xl overflow-hidden border border-zinc-200">
-        
+    <div id="app-content"
+        class="hidden min-h-screen flex-col max-w-7xl mx-auto shadow-2xl bg-white my-4 rounded-xl overflow-hidden border border-zinc-200">
+
         <!-- Header -->
         <header class="bg-zinc-900 text-white p-6 shadow-md border-b-4 border-red-600">
             <div class="flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <div class="bg-red-600 text-white font-black italic text-2xl px-3 py-1 tracking-tighter rounded-sm shadow-inner">MXF</div>
+                <div class="flex items-center gap-6">
+                    <!-- SVG Logo for Header -->
+                    <div class="w-32 h-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 180.397 50.879"
+                            preserveAspectRatio="xMidYMid meet">
+                            <g transform="translate(-286.057 -331.463)">
+                                <path
+                                    d="M455.815,509.215l-19.515.008,3.08-5.28h0l-3.889-.66-.051-.235,26.743-.012h0l4.271-7.322-36.12.017-16.027,8.35,6.9,0L408.436,526.33l17.944-.009,6.507-11.249,19.515-.008,3.412-5.85ZM378.284,511.6l-6.751-15.913h23.38l1.137,4.727-7.509,5.64.061.232,20.5-10.558h16.284l-26.611,13.846,6.625,16.752H372.466l12.409-8.828-.056-.232-18.767,9.06L326.27,538.519h-.247L378.284,511.6ZM335.965,526.3h3.093l22.915-14.044,9.559-16.561-22.68.01-18.919,12.277-.084-.226,2.914-2.682-2.311-6.157c-1.065-2.838-3.759-3.2-8.692-3.2l-17.859.008-17.845,30.6,17.619-.007,11.841-20.272-.736-3.892.2-.13,6.548,17.633c3.073,0,4.274-.209,5.7-1.123l19.358-12.106,2.549-3.031.229.074Z"
+                                    transform="translate(0 -156.177)" fill="#ffffff" fill-rule="evenodd" />
+                                <path
+                                    d="M1647.2,354.481l-.789-1.857-23.277,14.251,24.066-12.394Zm63.658-16.964,11.65-6.054H1680.98l-12.53,7.672.944,3.918,10.748-5.535Z"
+                                    transform="translate(-1271.531)" fill="#dc2626" fill-rule="evenodd" />
+                            </g>
+                        </svg>
+                    </div>
                     <div>
-                        <h1 class="text-2xl md:text-3xl font-bold tracking-tight uppercase">DMS Protheus <span class="text-red-500 font-light">| Deep Dive Operacional</span></h1>
+                        <h1 class="text-2xl md:text-3xl font-bold tracking-tight uppercase">DMS Protheus <span
+                                class="text-red-500 font-light">| Deep Dive Operacional</span></h1>
                         <p class="text-zinc-400 text-sm mt-1">Detalhamento de Processos e Integrações Nativas</p>
                     </div>
                 </div>
@@ -138,16 +262,20 @@
         <!-- Navigation -->
         <nav class="bg-zinc-100 border-b border-zinc-200 sticky top-0 z-50">
             <div class="flex overflow-x-auto no-scrollbar">
-                <button onclick="navigate('overview')" id="btn-overview" class="nav-btn active flex-1 py-4 px-6 font-bold text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 whitespace-nowrap transition-colors flex items-center justify-center gap-2 uppercase text-sm tracking-wide">
+                <button onclick="navigate('overview')" id="btn-overview"
+                    class="nav-btn active flex-1 py-4 px-6 font-bold text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 whitespace-nowrap transition-colors flex items-center justify-center gap-2 uppercase text-sm tracking-wide">
                     📊 Visão Geral
                 </button>
-                <button onclick="navigate('sigavei')" id="btn-sigavei" class="nav-btn flex-1 py-4 px-6 font-bold text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 whitespace-nowrap transition-colors flex items-center justify-center gap-2 uppercase text-sm tracking-wide">
+                <button onclick="navigate('sigavei')" id="btn-sigavei"
+                    class="nav-btn flex-1 py-4 px-6 font-bold text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 whitespace-nowrap transition-colors flex items-center justify-center gap-2 uppercase text-sm tracking-wide">
                     🏍️ SIGAVEI (Veículos)
                 </button>
-                <button onclick="navigate('sigaofi')" id="btn-sigaofi" class="nav-btn flex-1 py-4 px-6 font-bold text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 whitespace-nowrap transition-colors flex items-center justify-center gap-2 uppercase text-sm tracking-wide">
+                <button onclick="navigate('sigaofi')" id="btn-sigaofi"
+                    class="nav-btn flex-1 py-4 px-6 font-bold text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 whitespace-nowrap transition-colors flex items-center justify-center gap-2 uppercase text-sm tracking-wide">
                     🔧 SIGAOFI (Oficina)
                 </button>
-                <button onclick="navigate('sigapec')" id="btn-sigapec" class="nav-btn flex-1 py-4 px-6 font-bold text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 whitespace-nowrap transition-colors flex items-center justify-center gap-2 uppercase text-sm tracking-wide">
+                <button onclick="navigate('sigapec')" id="btn-sigapec"
+                    class="nav-btn flex-1 py-4 px-6 font-bold text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 whitespace-nowrap transition-colors flex items-center justify-center gap-2 uppercase text-sm tracking-wide">
                     ⚙️ SIGAPEC (Peças)
                 </button>
             </div>
@@ -159,7 +287,8 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-zinc-900 text-zinc-500 p-4 text-center text-xs uppercase tracking-widest border-t border-zinc-800">
+        <footer
+            class="bg-zinc-900 text-zinc-500 p-4 text-center text-xs uppercase tracking-widest border-t border-zinc-800">
             <p>Projeto de Implementação DMS Protheus • Processos Detalhados • MXF Motors</p>
         </footer>
     </div>
@@ -168,11 +297,11 @@
     <script>
         // === CONFIGURAÇÃO DE SENHA ===
         // Altere o valor abaixo para a senha desejada (use sempre letras minúsculas para evitar erros de digitação do cliente)
-        const SENHA_CORRETA = "mxf2026"; 
+        const SENHA_CORRETA = "mxf2026";
 
         function verificarSenha(event) {
             event.preventDefault(); // Impede o formulário de recarregar a página
-            
+
             const input = document.getElementById('password-input').value.toLowerCase();
             const loginScreen = document.getElementById('login-screen');
             const appContent = document.getElementById('app-content');
@@ -184,14 +313,14 @@
                 loginScreen.classList.add('hidden');
                 appContent.classList.remove('hidden');
                 appContent.classList.add('flex'); // Retorna o display flex do container principal
-                
+
                 // Inicia a aplicação (carrega os gráficos e a aba inicial)
                 init();
             } else {
                 // Senha Incorreta: Mostra erro e faz animação de tremor
                 errorMsg.classList.remove('hidden');
                 loginCard.classList.add('shake-animation');
-                
+
                 // Remove a classe de animação depois de concluir para permitir que trema novamente
                 setTimeout(() => {
                     loginCard.classList.remove('shake-animation');
@@ -219,8 +348,8 @@
                 intro: "O coração da comercialização da MXF. Controla desde a importação/montagem do lote de motos (Floor Plan) até a entrega final. Destaca-se pela capacidade de lidar com vendas no atacado para revendedores (com regras complexas de ICMS/IPI) e a venda de varejo consultiva na loja própria.",
                 workflow: ["Entrada de Estoque", "Distribuição (Lotes)", "Mesa de Negócios (B2C)", "Aprovação de Crédito", "Faturamento", "PDI (Oficina)", "Entrega"],
                 features: [
-                    { 
-                        title: "Rastreamento Completo de Veículos (Gestão de Chassi/VIN)", 
+                    {
+                        title: "Rastreamento Completo de Veículos (Gestão de Chassi/VIN)",
                         desc: "Monitoramento do ciclo de vida total da moto ou quadriciclo:",
                         list: [
                             "<strong>Recebimento:</strong> Entrada via XML ou produção com geração automática do VIN no estoque.",
@@ -229,8 +358,8 @@
                             "<strong>Histórico Vitalício:</strong> Vínculo do chassi com todas as O.S., peças trocadas, recalls e proprietários subsequentes (retomas/usados)."
                         ]
                     },
-                    { 
-                        title: "Faturamento Estratégico (B2B e B2C)", 
+                    {
+                        title: "Faturamento Estratégico (B2B e B2C)",
                         desc: "Motor de faturamento robusto adaptado para a realidade tributária brasileira:",
                         list: [
                             "<strong>Faturamento em Lote (B2B):</strong> Seleção rápida de múltiplos chassis para faturar um caminhão para um revendedor MXF com um clique.",
@@ -239,8 +368,8 @@
                             "<strong>Integração Financeira:</strong> Geração automática do Contas a Receber (SIGAFIN) com as condições de pagamento (boletos/financiamento)."
                         ]
                     },
-                    { 
-                        title: "Gestão de Retomas (Trade-In / Usados)", 
+                    {
+                        title: "Gestão de Retomas (Trade-In / Usados)",
                         desc: "Controle da entrada de veículos usados na negociação de um modelo MXF 0km:",
                         list: [
                             "Avaliação técnica digital.",
@@ -255,8 +384,8 @@
                 intro: "No mercado off-road, a oficina não é apenas manutenção, é preparação para performance. O SIGAOFI controla a produtividade, a correta aplicação de peças e resolve o desafio de cobrar a fábrica por serviços em garantia.",
                 workflow: ["Agendamento", "Check-in (Recepção)", "Orçamento por Fases", "Aprovação do Cliente", "Execução/Apontamento", "Fechamento O.S.", "Faturamento"],
                 features: [
-                    { 
-                        title: "A Ordem de Serviço (O.S.) Completa", 
+                    {
+                        title: "A Ordem de Serviço (O.S.) Completa",
                         desc: "O documento central da oficina, agregando todas as informações operacionais e financeiras:",
                         list: [
                             "<strong>Tipos de O.S.:</strong> Separação clara entre Revisão Normal, PDI (Pre-Delivery Inspection), Garantia (Pagador Fábrica), Preparação Off-Road, e Retrabalho.",
@@ -264,8 +393,8 @@
                             "<strong>Requisição Online:</strong> O mecânico solicita a peça via sistema; o estoque (SIGAPEC) reserva o item imediatamente e apara no centro de custo da O.S."
                         ]
                     },
-                    { 
-                        title: "Orçamento por Fases (Motor Workflow)", 
+                    {
+                        title: "Orçamento por Fases (Motor Workflow)",
                         desc: "Crucial para manutenções complexas (ex: quebra de motor na trilha), onde o escopo muda:",
                         list: [
                             "<strong>Fase 1 (Desmontagem/Diagnóstico):</strong> Cria-se a O.S. apenas para abrir o motor e avaliar. Cobra-se X horas. Cliente aprova.",
@@ -274,16 +403,16 @@
                             "<strong>Controle de Status:</strong> A O.S. muda de cor no painel dependendo da fase (Aguardando Aprovação, Em Execução, Aguardando Peça)."
                         ]
                     },
-                    { 
-                        title: "Gestão de Garantias e Recalls", 
+                    {
+                        title: "Gestão de Garantias e Recalls",
                         desc: "Protege a rentabilidade da revenda cobrando o fabricante:",
                         list: [
                             "Rateio automático na O.S.: Peça A = Cliente Paga; Peça B e Mão de Obra = Fábrica (MXF) Paga.",
                             "Geração do arquivo de envio de garantia (XML) para submissão e controle do status de reembolso."
                         ]
                     },
-                    { 
-                        title: "Apontamento Produtivo (T.M.P.)", 
+                    {
+                        title: "Apontamento Produtivo (T.M.P.)",
                         desc: "Monitoramento de eficiência:",
                         list: [
                             "Sistema Start/Stop para mecânicos nas boxes.",
@@ -297,8 +426,8 @@
                 intro: "Gestão inteligente do armazém de peças. Focado em manter a rede abastecida (venda por atacado) e garantir que a oficina da matriz não pare por falta de peças críticas (nível de serviço).",
                 workflow: ["Sugestão de Compra", "Pedido Importação", "Recebimento Cego", "Endereçamento", "Venda Atacado", "Requisição O.S.", "Expedição"],
                 features: [
-                    { 
-                        title: "Inteligência de Estoque (Curva ABC e Supersessão)", 
+                    {
+                        title: "Inteligência de Estoque (Curva ABC e Supersessão)",
                         desc: "Algoritmos para otimizar o capital imobilizado:",
                         list: [
                             "<strong>Curva ABC:</strong> Classifica peças por giro (Correntes, Filtros = A) vs. Valor (Motores, Suspensão = C), ajustando os pontos de pedido automaticamente.",
@@ -306,8 +435,8 @@
                             "<strong>Registro de Venda Perdida:</strong> Fundamental. Se o cliente procura um pneu e não tem, o balconista registra. Isso alimenta o MRP (Planejamento) para a próxima importação."
                         ]
                     },
-                    { 
-                        title: "Telepeças e Venda Atacado (B2B)", 
+                    {
+                        title: "Telepeças e Venda Atacado (B2B)",
                         desc: "Operação de distribuição para a rede MXF:",
                         list: [
                             "Interface rápida para o vendedor montar grandes pedidos para as revendas.",
@@ -336,27 +465,31 @@
         function renderContent(tabId) {
             contentArea.innerHTML = '';
             const data = dataStore[tabId];
-            
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'animate-in';
+            contentArea.appendChild(wrapper);
+
             const headerHTML = `
-                <div class="mb-10 animate-fade-in">
+                <div class="mb-10">
                     <h2 class="text-3xl font-black text-zinc-900 uppercase tracking-tight border-b-4 border-zinc-200 pb-2 mb-4 inline-block">
                         ${data.title}
                     </h2>
                     <p class="text-lg text-zinc-600 max-w-4xl mt-4 font-medium">${data.intro}</p>
                 </div>
             `;
-            contentArea.innerHTML += headerHTML;
+            wrapper.innerHTML = headerHTML;
 
-            if (tabId === 'overview') renderOverview();
-            else renderModule(tabId, data.title.split(' - ')[0]);
+            if (tabId === 'overview') renderOverview(wrapper);
+            else renderModule(tabId, data.title.split(' - ')[0], wrapper);
         }
 
-        function renderOverview() {
+        function renderOverview(wrapper) {
             const stats = dataStore.overview.stats;
             const dashboardHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                    ${stats.map(stat => `
-                        <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-red-600 flex items-center space-x-5 transition-transform hover:-translate-y-1">
+                    ${stats.map((stat, i) => `
+                        <div class="feature-card p-6 rounded-lg shadow-md border-t-4 border-red-600 flex items-center space-x-5 animate-in delay-${i + 1}">
                             <div class="text-5xl">${stat.icon}</div>
                             <div>
                                 <h3 class="text-zinc-500 text-xs font-bold uppercase tracking-widest">${stat.label}</h3>
@@ -367,7 +500,7 @@
                     `).join('')}
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in delay-3">
                     <div class="bg-white p-8 rounded-xl shadow-lg border border-zinc-200 flex flex-col">
                         <h3 class="text-xl font-black text-zinc-900 mb-2 uppercase">Composição de Receita MXF</h3>
                         <p class="text-sm text-zinc-500 mb-6">Integração dos módulos na geração de valor global.</p>
@@ -399,8 +532,8 @@
                     </div>
                 </div>
             `;
-            contentArea.insertAdjacentHTML('beforeend', dashboardHTML);
-            
+            wrapper.insertAdjacentHTML('beforeend', dashboardHTML);
+
             const ctx = document.getElementById('overviewChart').getContext('2d');
             appState.charts.overview = new Chart(ctx, {
                 type: 'pie',
@@ -414,16 +547,17 @@
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { font: { family: 'sans-serif', weight: 'bold' } } } }
+                    animation: { animateRotate: true, animateScale: true, duration: 2000, easing: 'easeOutQuart' },
+                    plugins: { legend: { position: 'bottom', labels: { font: { family: 'Inter', weight: 'bold' } } } }
                 }
             });
         }
 
-        function renderModule(moduleId, moduleName) {
+        function renderModule(moduleId, moduleName, wrapper) {
             const data = dataStore[moduleId];
 
             const html = `
-                <div class="mb-12 overflow-x-auto pb-6">
+                <div class="mb-12 overflow-x-auto pb-6 animate-in delay-1">
                     <h3 class="text-sm font-black text-zinc-400 uppercase tracking-widest mb-6">Workflow Operacional - ${moduleName}</h3>
                     <div class="flex items-center space-x-4 min-w-max px-2">
                         ${data.workflow.map((step, index) => `
@@ -438,31 +572,36 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div class="lg:col-span-7 grid grid-cols-1 xl:grid-cols-2 gap-5 align-top items-start">
-                        <div class="col-span-1 xl:col-span-2 mb-2">
+                    <div class="lg:col-span-12 xl:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5 align-top items-start">
+                        <div class="md:col-span-2 mb-2 animate-in delay-2">
                             <h3 class="text-xl font-black text-zinc-900 uppercase flex items-center gap-2">
                                 <span class="bg-red-600 w-2 h-6 inline-block"></span> Detalhamento de Funcionalidades
                             </h3>
                         </div>
-                        ${data.features.map(feature => `
-                            <div class="feature-card p-6 bg-white rounded-xl shadow-md border border-zinc-100 flex flex-col h-full">
-                                <h4 class="font-black text-zinc-900 mb-3 text-lg leading-tight">${feature.title}</h4>
-                                <p class="text-sm text-zinc-700 font-medium mb-3">${feature.desc}</p>
+                        ${data.features.map((feature, i) => `
+                            <div class="feature-card p-6 bg-white rounded-xl shadow-md border border-zinc-100 flex flex-col h-full animate-in delay-${i + 2}">
+                                <h4 class="font-black text-zinc-900 mb-3 text-lg leading-tight uppercase tracking-tight">${feature.title}</h4>
+                                <p class="text-sm text-zinc-700 font-medium mb-4">${feature.desc}</p>
                                 ${feature.list ? `
-                                    <ul class="feature-list mt-auto">
-                                        ${feature.list.map(item => `<li>${item}</li>`).join('')}
+                                    <ul class="space-y-2 mt-auto text-sm">
+                                        ${feature.list.map(item => `
+                                            <li class="flex items-start gap-2 text-zinc-600">
+                                                <span class="text-red-600 font-bold mt-0.5">•</span>
+                                                <span>${item}</span>
+                                            </li>
+                                        `).join('')}
                                     </ul>
                                 ` : ''}
                             </div>
                         `).join('')}
                     </div>
 
-                    <div class="lg:col-span-5">
+                    <div class="lg:col-span-12 xl:col-span-5 animate-in delay-4">
                         <div class="bg-zinc-900 p-6 md:p-8 rounded-xl shadow-xl border border-zinc-800 flex flex-col sticky top-24">
                             <h3 class="text-lg font-black text-white mb-2 uppercase">Indicadores de Desempenho</h3>
                             <p class="text-xs text-zinc-400 mb-6 font-medium">Visualização de dados nativa (Dashboard DMS).</p>
                             
-                            <div class="chart-container flex-grow bg-zinc-800 p-4 rounded-lg min-h-[300px]">
+                            <div class="chart-container flex-grow bg-zinc-800/50 p-4 rounded-lg min-h-[300px] border border-zinc-700/50">
                                 <canvas id="moduleChart"></canvas>
                             </div>
                             
@@ -474,8 +613,8 @@
                     </div>
                 </div>
             `;
-            
-            contentArea.insertAdjacentHTML('beforeend', html);
+
+            wrapper.insertAdjacentHTML('beforeend', html);
             initModuleChart(moduleId);
         }
 
@@ -539,7 +678,7 @@
                     },
                     options: {
                         responsive: true, maintainAspectRatio: false,
-                        scales: { r: { grid: { color: '#3f3f46' }, angleLines: { color: '#3f3f46' }, pointLabels: { color: '#e4e4e7', font: {size: 10} } } },
+                        scales: { r: { grid: { color: '#3f3f46' }, angleLines: { color: '#3f3f46' }, pointLabels: { color: '#e4e4e7', font: { size: 10 } } } },
                         plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } }
                     }
                 };
@@ -549,4 +688,5 @@
         }
     </script>
 </body>
+
 </html>
